@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const parqueSchema = new Schema([
+const lugaresSchema = new Schema(
   {
     label: { type: String, require: true },
     ocupado: { type: Boolean, require: true },
   },
-  { timestamps: true },
-]);
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Lugar', registoSchema);
+module.exports = mongoose.model('Lugar', lugaresSchema);
