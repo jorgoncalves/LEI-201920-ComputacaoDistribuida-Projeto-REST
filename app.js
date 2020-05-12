@@ -7,6 +7,8 @@ const clientesRoutes = require('./routes/clientesRoutes');
 const parqueRoutes = require('./routes/parquesRoutes');
 const registosRoutes = require('./routes/registosRoutes');
 
+const PORT = 3001;
+
 const MONGODB_URI =
   'mongodb+srv://jorge:mongodb@cluster0-8c4e8.mongodb.net/ComputacaoDistribuida-Projeto';
 
@@ -28,7 +30,7 @@ mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
     console.log('Connected ate ' + new Date().toLocaleString());
-    app.listen(3000);
+    app.listen(PORT);
   })
   .catch((err) => {
     console.log(err);

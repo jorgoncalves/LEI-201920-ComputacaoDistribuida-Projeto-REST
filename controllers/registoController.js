@@ -43,7 +43,12 @@ exports.updateRegisto = catchAsync(async (req, res, next) => {
     forma,
   } = req.body;
 
-  const registo = await Registo.findOne({ parque: idParque, lugar: idLugar });
+  const registo = await Registo.findOne({
+    matricula: matricula,
+    parque: idParque,
+    lugar: idLugar,
+    hora_saida: null,
+  });
   const parque = await Parque.findOne({ parque: idParque });
   const hora_entrada = momentjs(registo.hora_entrada);
   const hora_saida = momentjs();
