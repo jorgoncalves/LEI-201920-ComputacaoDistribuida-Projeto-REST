@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const swaggerUi = require('swagger-ui-express');
+
 const app = express();
 
 const clientesRoutes = require('./routes/clientesRoutes');
@@ -11,6 +13,14 @@ const PORT = 3001;
 
 const MONGODB_URI =
   'mongodb+srv://jorge:mongodb@cluster0-8c4e8.mongodb.net/ComputacaoDistribuida-Projeto';
+
+/**  Documentação da API
+ *  Especificação openAPI - criado no swagger editor: https://editor.swagger.io/
+ *  File > Convert and Save as JSON */
+const openAPIDocument = require('./api-docs/openapi.json');
+/** Documentação da API
+ *   /api-docs  disponibiliza o acesso à ferramenta swagger UI  */
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openAPIDocument));
 
 app.use(express.json());
 

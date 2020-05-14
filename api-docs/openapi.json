@@ -1,0 +1,384 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Docs",
+    "description": "This is the docs for the method available by this REST API.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Clientes",
+      "description": "",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "Parques"
+    },
+    {
+      "name": "Registos"
+    }
+  ],
+  "paths": {
+    "/clientes": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Coleção com todos os clientes",
+
+        "responses": {
+          "200": {
+            "description": "Coleção com todos os clientes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/clientesHabituais"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Clientes"],
+        "description": "Criar um novo cliente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/clientesHabituais"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Novo evento criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/clientesHabituais"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/{idCliente}": {
+      "put": {
+        "tags": ["Clientes"],
+        "description": "Atualizar apenas um cliente",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/objEventoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Cliente não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parques": {
+      "get": {
+        "tags": ["Parques"],
+        "description": "Coleção com todos os parques",
+
+        "responses": {
+          "200": {
+            "description": "Coleção com todos os parques",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/parques"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Parques"],
+        "description": "Criar um novo parque",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/parques"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Novo parque criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/parques"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parques/{idParque}": {
+      "put": {
+        "tags": ["Parques"],
+        "description": "Atualizar apenas um parque",
+        "parameters": [
+          {
+            "name": "idParque",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parque atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/parques"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Parque não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Parque não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registos": {
+      "get": {
+        "tags": ["Registos"],
+        "description": "Coleção com todos os registos",
+
+        "responses": {
+          "200": {
+            "description": "Coleção com todos os registos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registosDosParques"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Registos"],
+        "description": "Criar um novo registo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/registosDosParques"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Novo registo criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registosDosParques"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registos/{idRegisto}": {
+      "put": {
+        "tags": ["Registos"],
+        "description": "Atualizar apenas um registo",
+        "parameters": [
+          {
+            "name": "idRegisto",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registo atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registosDosParques"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Registo não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Registo não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "clientesHabituais": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "nome": { "type": "boolean" },
+          "matriculas": { "type": "array", "items": { "type": "string" } },
+          "saldoEmCartao": { "type": "number" }
+        }
+      },
+      "lugaresParque": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "label": { "type": "string" },
+          "ocupado": { "type": "boolean" }
+        }
+      },
+      "pagamentos": {
+        "type": "object",
+        "properties": {
+          "forma": { "type": "string" },
+          "valor": { "type": "number" },
+          "cliente": {
+            "type": "ObjectId",
+            "$ref": "#/components/schemas/clientesHabituais"
+          }
+        }
+      },
+      "parques": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "precoPorHora": { "type": "number" },
+          "lugares": {
+            "type": "ObjectId",
+            "$ref": "#/components/schemas/lugaresParque"
+          }
+        }
+      },
+      "registosDosParques": {
+        "type": "object",
+        "properties": {
+          "cliente": {
+            "type": "ObjectId",
+            "$ref": "#/components/schemas/clientesHabituais"
+          },
+          "matricula": { "type": "string" },
+          "hora_entrada": { "type": "string", "format": "date" },
+          "hora_saida": { "type": "string", "format": "date" },
+          "lugar": {
+            "type": "ObjectId",
+            "$ref": "#/components/schemas/lugaresParque"
+          },
+          "pagamento": {
+            "type": "ObjectId",
+            "$ref": "#/components/schemas/parques"
+          }
+        }
+      }
+    },
+    "responses": {
+      "400BadRequest": {
+        "description": "Bad request."
+      }
+    }
+  }
+}
