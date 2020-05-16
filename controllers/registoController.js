@@ -9,7 +9,9 @@ const Cliente = require('../models/clientesHibituais');
 const { catchAsync } = require('../util/catchAsync');
 
 exports.getAllRegistos = catchAsync(async (req, res, next) => {
-  const registos = await Registo.find();
+  const registos = await Registo.find()
+    .populate('parque', ['nome', 'precoPorHora'])
+    .populate('lugar', 'label');
   console.log(registos);
   res.status(200).json(registos);
 });
@@ -41,6 +43,7 @@ exports.updateRegisto = catchAsync(async (req, res, next) => {
     idParque,
     idLugar,
     forma,
+    valor,
   } = req.body;
 
   const registo = await Registo.findOne({
@@ -50,11 +53,11 @@ exports.updateRegisto = catchAsync(async (req, res, next) => {
     hora_saida: null,
   });
   const parque = await Parque.findOne({ parque: idParque });
-  const hora_entrada = momentjs(registo.hora_entrada);
-  const hora_saida = momentjs();
-  const valor =
-    momentjs.duration(hora_saida.diff(hora_entrada)).hours() *
-    parque.precoPorHora;
+  // const hora_entrada = momentjs(registo.hora_entrada);
+  // const hora_saida = momentjs();
+  // const valor =
+  //   momentjs.duration(hora_saida.diff(hora_entrada)).hours() *
+  //   parque.precoPorHora;
   // calcular só numa hora completa?
 
   const pagamento = new Pagamento({
