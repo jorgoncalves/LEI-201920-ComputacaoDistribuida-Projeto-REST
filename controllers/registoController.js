@@ -9,10 +9,9 @@ const Cliente = require('../models/clientesHibituais');
 const { catchAsync } = require('../util/catchAsync');
 
 exports.getAllRegistos = catchAsync(async (req, res, next) => {
-  const registos = await Registo.find()
+  const registos = await Registo.find({ hora_saida: null })
     .populate('parque', ['nome', 'precoPorHora'])
     .populate('lugar', 'label');
-  console.log(registos);
   res.status(200).json(registos);
 });
 
@@ -21,6 +20,10 @@ exports.createNewRegisto = catchAsync(async (req, res, next) => {
   // Utilizar o id do pagamento depois de criar o registo
   // Utilizar new Date() para a hora_entrada
   const { idCliente, matricula, idParque, idLugar } = req.body;
+
+  const lugar = await Lugar.findById(idLugar);
+  lugar.ocupado = true;
+  lugar.save();
 
   const registo = new Registo({
     cliente: idCliente,
@@ -60,11 +63,21 @@ exports.updateRegisto = catchAsync(async (req, res, next) => {
   //   parque.precoPorHora;
   // calcular só numa hora completa?
 
-  const pagamento = new Pagamento({
-    forma: forma,
-    valor: valor,
-    cliente: idCliente,
-  });
+  const lugar = await Lugar.findById(idLugar);
+  lugar.ocupado = false;
+  lugar.save();
+
+  const pagamento =
+    idCliente === ''
+      ? new Pagamento({
+          forma: forma,
+          valor: valor,
+        })
+      : new Pagamento({
+          forma: forma,
+          valor: valor,
+          cliente: idCliente,
+        });
 
   const respSavePagamento = await pagamento.save();
   const idPagamento = await respSavePagamento._id;
