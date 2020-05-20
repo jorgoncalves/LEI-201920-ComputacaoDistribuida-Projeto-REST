@@ -9,8 +9,12 @@ exports.getAllParques = catchAsync(async (req, res, next) => {
 });
 
 exports.createNewParque = catchAsync(async (req, res, next) => {
-  const { nome, precoPorHora, lugares } = req.body;
+  const { nome, precoPorHora, numLugares } = req.body;
+  const lugares = [];
   const lugaresID = [];
+  for (let i = 0; i < numLugares; i++) {
+    lugares.push({ label: i, ocupado: false });
+  }
 
   for await ({ label, ocupado } of lugares) {
     const lugar = new Lugar({
