@@ -6,6 +6,8 @@ const lugaresSchema = new Schema(
   {
     label: { type: String, require: true },
     ocupado: { type: Boolean, require: true },
+    mobilidadeReduzida: { type: Boolean },
+    reservado: { type: Boolean },
   },
   { timestamps: true }
 );

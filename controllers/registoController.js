@@ -15,11 +15,28 @@ exports.getAllRegistos = catchAsync(async (req, res, next) => {
   res.status(200).json(registos);
 });
 
+exports.getRegisto = catchAsync(async (req, res, next) => {
+  try {
+    const registo = await Registo.findOne({
+      parque: req.body.parque._id,
+      lugar: req.body.lugar._id,
+      hora_saida: null,
+    })
+      .populate('parque', ['nome', 'precoPorHora'])
+      .populate('lugar', 'label');
+    console.log('cliente, ', registo);
+    res.status(200).json(registo);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 exports.createNewRegisto = catchAsync(async (req, res, next) => {
   // Não esquecer de verificar se o cliente vêm vazio
   // Utilizar o id do pagamento depois de criar o registo
   // Utilizar new Date() para a hora_entrada
   const { idCliente, matricula, idParque, idLugar } = req.body;
+  console.log(idCliente);
 
   const lugar = await Lugar.findById(idLugar);
   lugar.ocupado = true;
@@ -81,6 +98,12 @@ exports.updateRegisto = catchAsync(async (req, res, next) => {
 
   const respSavePagamento = await pagamento.save();
   const idPagamento = await respSavePagamento._id;
+
+  if (forma === 'Card') {
+    const clienteData = await Cliente.findById(idCliente);
+    clienteData.saldoEmCartao = clienteData.saldoEmCartao - valor;
+    await clienteData.save();
+  }
 
   registo.pagamento = idPagamento;
   registo.hora_saida = momentjs(new Date()).format();

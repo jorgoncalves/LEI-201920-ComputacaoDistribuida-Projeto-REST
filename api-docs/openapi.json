@@ -12,12 +12,15 @@
   ],
   "tags": [
     {
-      "name": "Clientes",
+      "name": "Auth",
       "description": "",
       "externalDocs": {
         "description": "Find out more",
         "url": "http://swagger.io"
       }
+    },
+    {
+      "name": "Clientes"
     },
     {
       "name": "Parques"
@@ -27,11 +30,92 @@
     }
   ],
   "paths": {
+    "/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Metodo que permite criar uma conta na aplicação.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createSignup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve a confirmação da criação da conta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/responseSignup"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/badRequestSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Metodo que permite autenticar um utilizador.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/requestLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve a confirmação de login da conta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/responseLogin"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/badRequestSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/clientes": {
       "get": {
         "tags": ["Clientes"],
         "description": "Coleção com todos os clientes",
-
         "responses": {
           "200": {
             "description": "Coleção com todos os clientes",
@@ -74,8 +158,140 @@
         }
       }
     },
+    "/clientes/find": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Metodo que permite procurar um cliente por um dos seus parametros que o definem.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/clientesHabituais"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve apenas um cliente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/clientesHabituais"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/badRequestSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{idCliente}": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Metodo que permite pedir os dados de um cliente pelo seu id.",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Devolve apenas um cliente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/clientesHabituais"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/badRequestSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/clientes/{idCliente}": {
       "put": {
+        "tags": ["Clientes"],
+        "description": "Atualizar apenas um cliente",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/objEventoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Cliente não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/history/{idCliente}": {
+      "get": {
         "tags": ["Clientes"],
         "description": "Atualizar apenas um cliente",
         "parameters": [
@@ -311,10 +527,114 @@
           }
         }
       }
+    },
+    "/registos/findRegister": {
+      "get": {
+        "tags": ["Registos"],
+        "description": "Atualizar apenas um registo",
+        "parameters": [
+          {
+            "name": "idRegisto",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registo atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registosDosParques"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Registo não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Registo não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "badRequestSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "message": { "type": "string" },
+          "data": { "type": "object" }
+        }
+      },
+      "createSignup": {
+        "type": "object",
+        "properties": {
+          "cliente": { "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "boolean" },
+          "isAdmin": { "type": "boolean" }
+        }
+      },
+      "responseSignup": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "number" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": { "type": "string" },
+              "isAdmin": { "type": "boolean" },
+              "userAuthId": { "type": "string" },
+              "userClientId": { "type": "string" }
+            }
+          }
+        }
+      },
+      "requestLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "boolean" }
+        }
+      },
+      "responseLogin": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "number" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": { "type": "string" },
+              "isAdmin": { "type": "boolean" },
+              "userAuthId": { "type": "string" },
+              "userClientId": { "type": "string" }
+            }
+          }
+        }
+      },
       "clientesHabituais": {
         "type": "object",
         "properties": {

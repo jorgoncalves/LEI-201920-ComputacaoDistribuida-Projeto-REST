@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
+const authRoutes = require('./routes/authRoutes');
 const clientesRoutes = require('./routes/clientesRoutes');
 const parqueRoutes = require('./routes/parquesRoutes');
 const registosRoutes = require('./routes/registosRoutes');
@@ -24,6 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openAPIDocument));
 
 app.use(express.json());
 
+app.use('/auth', authRoutes);
 app.use('/clientes', clientesRoutes);
 app.use('/parques', parqueRoutes);
 app.use('/registos', registosRoutes);

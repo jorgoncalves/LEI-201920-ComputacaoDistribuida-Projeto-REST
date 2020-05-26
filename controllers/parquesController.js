@@ -9,18 +9,22 @@ exports.getAllParques = catchAsync(async (req, res, next) => {
 });
 
 exports.createNewParque = catchAsync(async (req, res, next) => {
-  const { nome, precoPorHora, numLugares } = req.body;
+  const { nome, precoPorHora, numLugares, numMobilidadeReduzida } = req.body;
   const lugares = [];
   const lugaresID = [];
   for (let i = 0; i < numLugares; i++) {
-    lugares.push({ label: i, ocupado: false });
+    if (i < numMobilidadeReduzida)
+      lugares.push({ label: i, ocupado: false, mobilidadeReduzida: true });
+    else lugares.push({ label: i, ocupado: false, mobilidadeReduzida: false });
   }
 
-  for await ({ label, ocupado } of lugares) {
+  for await ({ label, ocupado, mobilidadeReduzida } of lugares) {
     const lugar = new Lugar({
-      label: label,
+      label: label + 1,
       ocupado: ocupado,
+      mobilidadeReduzida: mobilidadeReduzida,
     });
+
     const respSaveLugar = await lugar.save();
     lugaresID.push(respSaveLugar._id);
   }
