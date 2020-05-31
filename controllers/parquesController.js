@@ -8,8 +8,55 @@ exports.getAllParques = catchAsync(async (req, res, next) => {
   res.status(200).json(parques);
 });
 
+exports.findPark = catchAsync(async (req, res, next) => {
+  try {
+    const parque = await Parque.findOne(req.body).populate('lugares');
+    console.log('parque, ', parque);
+    res.status(200).json(parque);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 exports.createNewParque = catchAsync(async (req, res, next) => {
   const { nome, precoPorHora, numLugares, numMobilidadeReduzida } = req.body;
+  const lugaresID = await createLugares(numLugares, numMobilidadeReduzida);
+
+  const parque = new Parque({
+    nome: nome,
+    precoPorHora: precoPorHora,
+    lugares: lugaresID,
+  });
+  const respSave = await parque.save();
+  res.status(201).json(respSave);
+});
+
+exports.updateParque = catchAsync(async (req, res, next) => {
+  const {
+    _id,
+    nome,
+    precoPorHora,
+    numLugares,
+    numMobilidadeReduzida,
+  } = req.body;
+  const parque = await Parque.findById(_id);
+  parque.nome = nome;
+  parque.precoPorHora = precoPorHora;
+  parque.lugares.forEach(async (element) => {
+    await Lugar.findByIdAndDelete(element);
+  });
+  parque.lugares = await createLugares(numLugares, numMobilidadeReduzida);
+  const respSave = await parque.save();
+  res.status(200).json({
+    status: 200,
+    message: 'Park updated!',
+    data: {
+      ...respSave._doc,
+    },
+  });
+});
+
+const createLugares = async (numLugares, numMobilidadeReduzida) => {
   const lugares = [];
   const lugaresID = [];
   for (let i = 0; i < numLugares; i++) {
@@ -28,14 +75,5 @@ exports.createNewParque = catchAsync(async (req, res, next) => {
     const respSaveLugar = await lugar.save();
     lugaresID.push(respSaveLugar._id);
   }
-
-  const parque = new Parque({
-    nome: nome,
-    precoPorHora: precoPorHora,
-    lugares: lugaresID,
-  });
-  const respSave = await parque.save();
-  res.status(201).json(respSave);
-});
-
-exports.updateParque = catchAsync(async (req, res, next) => {});
+  return lugaresID;
+};

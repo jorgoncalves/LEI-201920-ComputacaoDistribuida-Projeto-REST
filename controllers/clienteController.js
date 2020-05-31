@@ -1,3 +1,4 @@
+const Auth = require('../models/auth');
 const Cliente = require('../models/clientesHibituais');
 const Registo = require('../models/registosDosParques');
 
@@ -15,11 +16,20 @@ exports.getClient = catchAsync(async (req, res, next) => {
 
 exports.findClient = catchAsync(async (req, res, next) => {
   try {
-    setTimeout(async () => {
-      const cliente = await Cliente.findOne(req.body);
-      console.log('cliente, ', cliente);
-      res.status(200).json(cliente);
-    }, 500);
+    const cliente = await Cliente.findOne(req.body);
+    console.log('cliente, ', cliente);
+    res.status(200).json(cliente);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+exports.deleteClient = catchAsync(async (req, res, next) => {
+  try {
+    const auth = await Auth.findOneAndDelete({ cliente: req.params.id });
+    const cliente = await Cliente.findByIdAndDelete(req.params.id);
+    console.log('clienteDelete, ', cliente);
+    res.status(200).json({ auth, cliente });
   } catch (error) {
     console.log(error);
   }

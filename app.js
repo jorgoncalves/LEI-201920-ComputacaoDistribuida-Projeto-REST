@@ -12,6 +12,8 @@ const registosRoutes = require('./routes/registosRoutes');
 
 const PORT = 3001;
 
+const isAuth = require('./middleware/is-auth');
+
 const MONGODB_URI =
   'mongodb+srv://jorge:mongodb@cluster0-8c4e8.mongodb.net/ComputacaoDistribuida-Projeto';
 

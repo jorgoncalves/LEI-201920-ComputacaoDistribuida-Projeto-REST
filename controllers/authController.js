@@ -66,9 +66,9 @@ exports.signup = async (req, res, next) => {
             newUser_Auth.email,
             newUser_Auth.isAdmin,
             newUser_Auth._id.toString(),
-            (newUser_Auth.cliente.toString() = !undefined
+            newUser_Auth.cliente !== undefined
               ? newUser_Auth.cliente.toString()
-              : null)
+              : null
           ),
           isAdmin: newUser_Auth.isAdmin,
           userAuthId: newUser_Auth._id.toString(),
