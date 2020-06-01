@@ -8,22 +8,19 @@ exports.getAllParques = catchAsync(async (req, res, next) => {
   res.status(200).json(parques);
 });
 
-exports.createNewParque = catchAsync(async (req, res, next) => {
-  const { nome, precoPorHora, numLugares } = req.body;
-  const lugares = [];
-  const lugaresID = [];
-  for (let i = 0; i < numLugares; i++) {
-    lugares.push({ label: i, ocupado: false });
+exports.findPark = catchAsync(async (req, res, next) => {
+  try {
+    const parque = await Parque.findOne(req.body).populate('lugares');
+    console.log('parque, ', parque);
+    res.status(200).json(parque);
+  } catch (error) {
+    console.log(error);
   }
+});
 
-  for await ({ label, ocupado } of lugares) {
-    const lugar = new Lugar({
-      label: label,
-      ocupado: ocupado,
-    });
-    const respSaveLugar = await lugar.save();
-    lugaresID.push(respSaveLugar._id);
-  }
+exports.createNewParque = catchAsync(async (req, res, next) => {
+  const { nome, precoPorHora, numLugares, numMobilidadeReduzida } = req.body;
+  const lugaresID = await createLugares(numLugares, numMobilidadeReduzida);
 
   const parque = new Parque({
     nome: nome,
@@ -34,4 +31,49 @@ exports.createNewParque = catchAsync(async (req, res, next) => {
   res.status(201).json(respSave);
 });
 
-exports.updateParque = catchAsync(async (req, res, next) => {});
+exports.updateParque = catchAsync(async (req, res, next) => {
+  const {
+    _id,
+    nome,
+    precoPorHora,
+    numLugares,
+    numMobilidadeReduzida,
+  } = req.body;
+  const parque = await Parque.findById(_id);
+  parque.nome = nome;
+  parque.precoPorHora = precoPorHora;
+  parque.lugares.forEach(async (element) => {
+    await Lugar.findByIdAndDelete(element);
+  });
+  parque.lugares = await createLugares(numLugares, numMobilidadeReduzida);
+  const respSave = await parque.save();
+  res.status(200).json({
+    status: 200,
+    message: 'Park updated!',
+    data: {
+      ...respSave._doc,
+    },
+  });
+});
+
+const createLugares = async (numLugares, numMobilidadeReduzida) => {
+  const lugares = [];
+  const lugaresID = [];
+  for (let i = 0; i < numLugares; i++) {
+    if (i < numMobilidadeReduzida)
+      lugares.push({ label: i, ocupado: false, mobilidadeReduzida: true });
+    else lugares.push({ label: i, ocupado: false, mobilidadeReduzida: false });
+  }
+
+  for await ({ label, ocupado, mobilidadeReduzida } of lugares) {
+    const lugar = new Lugar({
+      label: label + 1,
+      ocupado: ocupado,
+      mobilidadeReduzida: mobilidadeReduzida,
+    });
+
+    const respSaveLugar = await lugar.save();
+    lugaresID.push(respSaveLugar._id);
+  }
+  return lugaresID;
+};

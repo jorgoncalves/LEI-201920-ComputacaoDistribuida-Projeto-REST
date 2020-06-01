@@ -15,12 +15,15 @@
   ],
   "tags": [
     {
-      "name": "Clientes",
+      "name": "Auth",
       "description": "",
       "externalDocs": {
         "description": "Find out more",
         "url": "http://swagger.io"
       }
+    },
+    {
+      "name": "Clientes"
     },
     {
       "name": "Parques"
@@ -30,11 +33,84 @@
     }
   ],
   "paths": {
+    "/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Metodo que permite criar uma conta na aplicação.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createSignup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve a confirmação da criação da conta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseSignup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Metodo que permite autenticar um utilizador.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/requestLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve a confirmação de login da conta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseLogin"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/clientes": {
       "get": {
         "tags": ["Clientes"],
         "description": "Coleção com todos os clientes",
-
         "responses": {
           "200": {
             "description": "Coleção com todos os clientes",
@@ -77,6 +153,80 @@
         }
       }
     },
+    "/clientes/find": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Metodo que permite procurar um cliente por um dos seus parametros que o definem.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "$ref": "#/components/schemas/clientesHabituais"
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Devolve apenas um cliente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/clientesHabituais"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{idCliente}": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Metodo que permite pedir os dados de um cliente pelo seu id.",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Devolve apenas um cliente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/clientesHabituais"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Devolve caso algum erro possa ter surgido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/clientes/{idCliente}": {
       "put": {
         "tags": ["Clientes"],
@@ -98,7 +248,56 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/objEventoResponse"
+                  "$ref": "#/components/schemas/clientesHabituais"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "id do Cliente não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/history/{idCliente}": {
+      "get": {
+        "tags": ["Clientes"],
+        "description": "Devolve o histórico de registos de um cliente.",
+        "parameters": [
+          {
+            "name": "idCliente",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "[a-zA-Z0-9]+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Histórico de registos de um cliente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/registosDosParques"
                 }
               }
             }
@@ -138,7 +337,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/parques"
+                    "$ref": "#/components/schemas/responseParques"
                   }
                 }
               }
@@ -153,7 +352,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/parques"
+                "$ref": "#/components/schemas/createParque"
               }
             }
           }
@@ -164,7 +363,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/parques"
+                  "$ref": "#/components/schemas/responseParques"
                 }
               }
             }
@@ -175,7 +374,7 @@
     "/parques/{idParque}": {
       "put": {
         "tags": ["Parques"],
-        "description": "Atualizar apenas um parque",
+        "description": "Em desenvolvimento. Atualizar apenas um parque.",
         "parameters": [
           {
             "name": "idParque",
@@ -187,13 +386,22 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createParque"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Parque atualizado",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/parques"
+                  "$ref": "#/components/schemas/responseParques"
                 }
               }
             }
@@ -288,7 +496,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/registosDosParques"
+                  "$ref": "#/components/schemas/updateRegistosDosParques"
                 }
               }
             }
@@ -314,10 +522,125 @@
           }
         }
       }
+    },
+    "/registos/findRegister": {
+      "get": {
+        "tags": ["Registos"],
+        "description": "Metodo que devolve apenas um registo.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "parque": {
+                    "type": "object",
+                    "properties": {
+                      "_id": { "type": "string" }
+                    }
+                  },
+                  "lugar": {
+                    "type": "object",
+                    "properties": {
+                      "_id": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registo encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registosDosParques"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "description": "Registo não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Registo não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "badRequestSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "number" },
+          "message": { "type": "string" },
+          "data": { "type": "object" }
+        }
+      },
+      "createSignup": {
+        "type": "object",
+        "properties": {
+          "cliente": { "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "boolean" },
+          "isAdmin": { "type": "boolean" }
+        }
+      },
+      "responseSignup": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "number" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": { "type": "string" },
+              "isAdmin": { "type": "boolean" },
+              "userAuthId": { "type": "string" },
+              "userClientId": { "type": "string" }
+            }
+          }
+        }
+      },
+      "requestLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "boolean" }
+        }
+      },
+      "responseLogin": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "number" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": { "type": "string" },
+              "isAdmin": { "type": "boolean" },
+              "userAuthId": { "type": "string" },
+              "userClientId": { "type": "string" }
+            }
+          }
+        }
+      },
       "clientesHabituais": {
         "type": "object",
         "properties": {
@@ -340,41 +663,59 @@
         "properties": {
           "forma": { "type": "string" },
           "valor": { "type": "number" },
-          "cliente": {
-            "type": "ObjectId",
-            "$ref": "#/components/schemas/clientesHabituais"
-          }
+          "cliente": { "type": "ObjectId" }
         }
       },
-      "parques": {
+      "createParque": {
         "type": "object",
         "properties": {
           "nome": { "type": "string" },
           "precoPorHora": { "type": "number" },
-          "lugares": {
-            "type": "ObjectId",
-            "$ref": "#/components/schemas/lugaresParque"
-          }
+          "numLugares": { "type": "number" },
+          "numMobilidadeReduzida": { "type": "string" }
+        }
+      },
+      "responseParques": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "precoPorHora": { "type": "number" },
+          "lugares": { "type": "ObjectId" }
+        }
+      },
+      "createRegistosDosParques": {
+        "type": "object",
+        "properties": {
+          "cliente": { "type": "ObjectId" },
+          "matricula": { "type": "string" },
+          "hora_entrada": { "type": "string", "format": "date" },
+          "parque": { "type": "ObjectId" },
+          "lugar": { "type": "ObjectId" }
+        }
+      },
+      "updateRegistosDosParques": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "ObjectId" },
+          "cliente": { "type": "ObjectId" },
+          "matricula": { "type": "string" },
+          "hora_entrada": { "type": "string", "format": "date" },
+          "parque": { "type": "ObjectId" },
+          "lugar": { "type": "ObjectId" },
+          "forma": { "type": "string" },
+          "valor": { "type": "string" }
         }
       },
       "registosDosParques": {
         "type": "object",
         "properties": {
-          "cliente": {
-            "type": "ObjectId",
-            "$ref": "#/components/schemas/clientesHabituais"
-          },
+          "cliente": { "type": "ObjectId" },
           "matricula": { "type": "string" },
           "hora_entrada": { "type": "string", "format": "date" },
           "hora_saida": { "type": "string", "format": "date" },
-          "lugar": {
-            "type": "ObjectId",
-            "$ref": "#/components/schemas/lugaresParque"
-          },
-          "pagamento": {
-            "type": "ObjectId",
-            "$ref": "#/components/schemas/parques"
-          }
+          "parque": { "type": "ObjectId" },
+          "lugar": { "type": "ObjectId" },
+          "pagamento": { "type": "ObjectId" }
         }
       }
     },

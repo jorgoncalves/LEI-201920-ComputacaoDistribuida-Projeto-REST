@@ -5,11 +5,14 @@ const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
+const authRoutes = require('./routes/authRoutes');
 const clientesRoutes = require('./routes/clientesRoutes');
 const parqueRoutes = require('./routes/parquesRoutes');
 const registosRoutes = require('./routes/registosRoutes');
 
 const PORT = 3001;
+
+const isAuth = require('./middleware/is-auth');
 
 const MONGODB_URI =
   'mongodb+srv://jorge:mongodb@cluster0-8c4e8.mongodb.net/ComputacaoDistribuida-Projeto';
@@ -24,6 +27,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openAPIDocument));
 
 app.use(express.json());
 
+app.use('/auth', authRoutes);
 app.use('/clientes', clientesRoutes);
 app.use('/parques', parqueRoutes);
 app.use('/registos', registosRoutes);
